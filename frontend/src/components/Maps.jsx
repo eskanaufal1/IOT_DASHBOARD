@@ -45,15 +45,16 @@ const Maps = (props) => {
             <Popup>{items.device}</Popup>
           </CircleMarker>
         ))}
-        {props.data[0] !== undefined ? (
+
+        {/* {props.data[0] !== undefined ? (
           <Marker position={[props.data[0].latitude, props.data[0].longitude]}>
-            <Popup>Jakarta, Indonesia</Popup>
+            <Popup>{props.data[0].device}</Popup>
           </Marker>
         ) : (
           <Marker position={[-6.21462, 106.84513]}>
             <Popup>Jakarta, Indonesia</Popup>
           </Marker>
-        )}
+        )} */}
       </MapContainer>
     </>
   );

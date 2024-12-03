@@ -2,7 +2,11 @@ const express = require("express");
 const router = express.Router();
 const cors = require("cors");
 const { getRealtimeData } = require("../controllers/realtimeController");
-const { addDevice, getDevices } = require("../controllers/deviceController");
+const {
+  addDevice,
+  getDevices,
+  getDevices_dashboard,
+} = require("../controllers/deviceController");
 const {
   test,
   userRegister,
@@ -10,6 +14,7 @@ const {
   getProfile,
   userLogout,
 } = require("../controllers/authController");
+const getHelpDevice = require("../controllers/getHelpDevice");
 
 //middleware
 router.use(
@@ -33,6 +38,10 @@ router.post("/adddevice", addDevice);
 
 router.post("/devices", getDevices);
 
+// router.post("/devices_dashboard", getDevices_dashboard);
+
 router.post("/getlatestdata", getRealtimeData);
+
+router.post("/help", getHelpDevice);
 
 module.exports = router;

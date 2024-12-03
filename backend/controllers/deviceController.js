@@ -31,15 +31,32 @@ const addDevice = async (req, res) => {
 const getDevices = async (req, res) => {
   try {
     const { created_by } = req.body;
+    console.log("created_by = ", created_by);
     const devices = await Device.find({
       created_by: created_by,
     }).sort({ createdAt: -1 });
     await res.status(200).json(devices);
     console.log("get devices success");
+    console.log(devices);
   } catch (error) {
     res.status(500).json({ error: error });
     console.log(error);
   }
 };
 
-module.exports = { addDevice, getDevices };
+const getDevices_dashboard = async (req, res) => {
+  try {
+    const { device } = req.body;
+    const devices = await Device.find({
+      device: device,
+    }).sort({ createdAt: -1 });
+    await res.status(200).json(devices);
+    console.log("get devices success");
+    console.log(devices);
+  } catch (error) {
+    res.status(500).json({ error: error });
+    console.log(error);
+  }
+};
+
+module.exports = { addDevice, getDevices, getDevices_dashboard };

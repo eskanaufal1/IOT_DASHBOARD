@@ -1,6 +1,10 @@
 import React from "react";
 import { Table, Tag } from "antd";
 import moment from "moment";
+import axios from "axios";
+axios.defaults.baseURL = import.meta.env.VITE_AXIOS_BASE_URL;
+axios.defaults.withCredentials = true;
+
 const columns = [
   {
     title: "Time",
@@ -13,6 +17,17 @@ const columns = [
     dataIndex: "device",
     key: "device",
     width: 120,
+    render: (text) => (
+      <a
+        onClick={async (e) => {
+          e.preventDefault();
+          await axios.post("/help", { device: text });
+          console.log("clicked", text);
+        }}
+      >
+        {text}
+      </a>
+    ),
   },
   {
     title: "Emergency State",

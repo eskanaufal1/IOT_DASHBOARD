@@ -1,6 +1,8 @@
 import React, { useEffect, useState } from "react";
 import { Divider, Radio, Table, Tag } from "antd";
 import axios from "axios";
+import { UserContext } from "../../context/userContext";
+import { useContext } from "react";
 
 axios.defaults.baseURL = import.meta.env.VITE_AXIOS_BASE_URL;
 axios.defaults.withCredentials = true;
@@ -9,11 +11,13 @@ const columns = [
   {
     title: "Device",
     dataIndex: "device",
+    key: "1",
     render: (text) => <a>{text}</a>,
   },
   {
     title: "Color",
     dataIndex: "color",
+    key: "2",
     render: (_, { color }) => (
       <>
         <Tag color={color} key={_}>
@@ -25,20 +29,13 @@ const columns = [
   {
     title: "Description",
     dataIndex: "description",
+    key: "3",
   },
   {
     title: "Topic",
     dataIndex: "topic",
+    key: "4",
   },
-
-  // {
-  //   title: "Status",
-  //   dataIndex: "status",
-  // },
-  // {
-  //   title: "Last Connection",
-  //   dataIndex: "last_connection",
-  // },
 ];
 
 // rowSelection object indicates the need for row selection
@@ -58,38 +55,34 @@ const rowSelection = {
 };
 
 const TableDevice = () => {
-  const [deviceData, setDeviceData] = useState([
-    {
-      device: "aa",
-      description: "aa",
-      topic: "aa",
-      color: "aa",
-      created_by: "ss",
-    },
-  ]);
-
-  useEffect(() => {
-    const getData = async () => {
+  const { user, setUser } = useContext(UserContext);
+  const [deviceData, setDeviceData] = useState([]);
+  const getData = async () => {
+    // console.log(user);
+    if (user) {
       await axios
-        .post("/devices", { created_by: "jellymakers1997@gmail.com" })
+        .post("/devices", { created_by: user.email })
         .then((res) => {
           setDeviceData(res.data);
+          console.log("device data = ", deviceData);
         })
         .catch((err) => {
           console.log(err);
           setDeviceData([]);
         });
-    };
-    getData();
+    }
+  };
+  useEffect(() => {
+    const interval = setInterval(() => {
+      getData();
+    }, 1000);
+    return () => clearInterval(interval);
   }, []);
-  // console.log("Device Data = ", deviceData);
+
   return (
     <div>
       <Table
-        rowSelection={{
-          type: "checkbox",
-          ...rowSelection,
-        }}
+        rowKey={(record) => record._id}
         columns={columns}
         dataSource={deviceData}
         scroll={{
