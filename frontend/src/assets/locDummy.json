@@ -1,0 +1,40 @@
+{
+  "locations": [
+    {
+      "key": 1,
+      "lat": -6.21462,
+      "lng": 106.84513,
+      "pathOptions": { "color": "green", "fillColor": "green" }
+    },
+    {
+      "key": 1,
+      "lat": -6.21462,
+      "lng": 106.85513,
+      "pathOptions": { "color": "green", "fillColor": "green" }
+    },
+    {
+      "key": 1,
+      "lat": -6.22462,
+      "lng": 106.84513,
+      "pathOptions": { "color": "green", "fillColor": "green" }
+    },
+    {
+      "key": 1,
+      "lat": -6.22462,
+      "lng": 106.85513,
+      "pathOptions": { "color": "red", "fillColor": "red" }
+    },
+    {
+      "key": 1,
+      "lat": -6.23462,
+      "lng": 106.85513,
+      "pathOptions": { "color": "red", "fillColor": "red" }
+    },
+    {
+      "key": 1,
+      "lat": -6.23462,
+      "lng": 106.84513,
+      "pathOptions": { "color": "red", "fillColor": "red" }
+    }
+  ]
+}

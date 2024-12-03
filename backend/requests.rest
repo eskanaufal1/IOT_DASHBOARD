@@ -1,0 +1,50 @@
+GET http://localhost:3000/users
+
+###
+
+POST http://localhost:3000/users
+Content-Type: application/json
+
+{
+    "name": "Johnny",
+    "password": "password"
+
+}
+
+###
+
+POST http://localhost:3000/users/login
+Content-Type: application/json
+
+{
+    "name": "Johnny",
+    "password": "password"
+
+}
+
+###
+
+GET http://localhost:3000/posts
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJuYW1lIjoiQmFtYmFuZyIsImlhdCI6MTczMjEzMDIzMX0.hY7ajM6AXBKFjsav7ePqWF-I57BChff3o3ibelysH3U
+
+###
+
+POST http://localhost:3000/login
+Content-Type: application/json
+
+{
+    "username": "Johnny",
+    "title": "Hello World"
+
+}
+
+###
+
+POST http://localhost:3000/login
+Content-Type: application/json
+
+{
+    "username": "Bambang",
+    "title": "password"
+
+}
