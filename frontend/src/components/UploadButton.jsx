@@ -59,9 +59,10 @@ const UploadButton = () => {
         listType="picture-circle"
         className="avatar-uploader"
         showUploadList={false}
-        action="https://660d2bd96ddfa2943b33731c.mockapi.io/api/upload"
+        action={import.meta.env.VITE_AXIOS_BASE_URL + "/uploads"}
         beforeUpload={beforeUpload}
         onChange={handleChange}
+        status
       >
         {imageUrl ? (
           <img

@@ -7,7 +7,7 @@ const getRealtimeData = async (req, res) => {
       created_by: created_by,
     })
       .sort({ createdAt: -1 })
-      .limit(100);
+      .limit(2000);
     res.status(200).json(realtimeData);
   } catch (error) {
     res.status(500).json({ error: error.message });

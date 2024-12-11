@@ -12,13 +12,16 @@ import {
   Modal,
   Form,
   Checkbox,
+  Spin,
 } from "antd";
 import { PlusOutlined, ReloadOutlined } from "@ant-design/icons";
 import TableDevice from "../components/TableDevice";
 import axios from "axios";
-
+import { useContext } from "react";
+import { UserContext } from "../../context/userContext";
 axios.defaults.baseURL = import.meta.env.VITE_AXIOS_BASE_URL;
 axios.defaults.withCredentials = true;
+// const
 const { useToken } = theme;
 const { Search } = Input;
 const { Title, Text } = Typography;
@@ -26,6 +29,7 @@ const { Header, Content, Footer, Sider } = Layout;
 const onSearch = (value, _e, info) => console.log(info?.source, value);
 
 const UserPage = ({ data }) => {
+  const { user, setUser } = useContext(UserContext);
   const { token } = useToken();
   const [deviceData, setDeviceData] = useState({
     device: "",
@@ -39,15 +43,26 @@ const UserPage = ({ data }) => {
   const showModal = () => {
     setOpen(true);
   };
-  const submitDevice = () => {
-    axios
-      .post("/adddevice", deviceData)
-      .then((res) => {
-        console.log(res);
-      })
-      .catch((err) => {
-        console.log(err);
-      });
+  const submitDevice = async () => {
+    try {
+      console.log("user == ", user);
+      if (user) {
+        setDeviceData({
+          ...deviceData,
+          created_by: user.email,
+        });
+      }
+      await axios
+        .post("/adddevice", deviceData)
+        .then((res) => {
+          console.log(res);
+        })
+        .catch((err) => {
+          console.log(err);
+        });
+    } catch (error) {
+      console.log(error);
+    }
   };
   const handleOk = () => {
     setLoading(true);
@@ -65,6 +80,21 @@ const UserPage = ({ data }) => {
   const onFinishFailed = (errorInfo) => {
     console.log("Failed:", errorInfo);
   };
+  if (!user) {
+    return (
+      <Layout>
+        <Content
+          style={{
+            padding: 20,
+            borderRadius: token.borderRadius,
+            backgroundColor: data.backgroundColor,
+          }}
+        >
+          <Spin></Spin>
+        </Content>
+      </Layout>
+    );
+  }
 
   return (
     <Layout>
@@ -178,13 +208,18 @@ const UserPage = ({ data }) => {
                 >
                   <Input
                     onChange={(e) =>
-                      setDeviceData({ ...deviceData, topic: e.target.value })
+                      setDeviceData({
+                        ...deviceData,
+                        topic: e.target.value,
+                        created_by: user.email,
+                      })
                     }
                   />
                 </Form.Item>
                 <Form.Item
                   label="created by"
                   name="created_by"
+                  initialValue={user.email}
                   rules={[
                     {
                       required: true,
@@ -192,28 +227,18 @@ const UserPage = ({ data }) => {
                     },
                   ]}
                 >
-                  <Input
-                    onChange={(e) =>
-                      setDeviceData({
-                        ...deviceData,
-                        created_by: e.target.value,
-                      })
-                    }
-                  />
+                  <Input placeholder={user.email} />
                 </Form.Item>
               </Form>
             </Modal>
-            <Button type="text" icon={<ReloadOutlined />}>
-              Reload
-            </Button>
           </Space>
-          <Search
+          {/* <Search
             placeholder="Search Device Name"
             onSearch={onSearch}
             style={{
               width: 200,
             }}
-          />
+          /> */}
         </Flex>
         <Divider style={{ margin: "10px 0", borderColor: "#B0B0B0" }} />
 

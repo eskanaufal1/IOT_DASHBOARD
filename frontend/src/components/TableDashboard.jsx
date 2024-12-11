@@ -1,7 +1,10 @@
 import React from "react";
 import { Table, Tag } from "antd";
 import moment from "moment";
+import { useSelector } from "react-redux";
+
 import axios from "axios";
+
 axios.defaults.baseURL = import.meta.env.VITE_AXIOS_BASE_URL;
 axios.defaults.withCredentials = true;
 
@@ -22,7 +25,7 @@ const columns = [
         onClick={async (e) => {
           e.preventDefault();
           await axios.post("/help", { device: text });
-          console.log("clicked", text);
+          console.log("Helping = ", text);
         }}
       >
         {text}
@@ -34,6 +37,13 @@ const columns = [
     dataIndex: "state",
     key: "state",
     width: 100,
+    render: (_, { state }) => (
+      <>
+        <Tag color={state === "true" ? "red" : "green"} key={_}>
+          {state === "true" ? "BAHAYA" : "AMAN"}
+        </Tag>
+      </>
+    ),
   },
   {
     title: "Color",
@@ -74,21 +84,36 @@ const columns = [
   },
 ];
 
-const TableDashboard = (props) => {
-  if (props.data[0] !== undefined) {
-    props.data.map((item) => {
-      const formattedDate = moment(item.updatedAt)
-        .locale("id")
-        .format("DD MMMM YYYY HH:mm:ss");
-      item.updatedAt = formattedDate;
-    });
+const TableDashboard = () => {
+  let realtimeDatas = useSelector((state) => state.realtimeData.realtimeData);
+  // console.log("length = ", realtimeDatas.length);
+  let updatedData = Array.apply(null, Array(realtimeDatas.length)).map(
+    function () {}
+  );
+
+  try {
+    if (realtimeDatas[0] !== undefined) {
+      realtimeDatas.map((item, index) => {
+        const formattedDate = moment(item.updatedAt)
+          .locale("id")
+          .format("DD MMMM YYYY HH:mm:ss");
+        updatedData[index] = {
+          ...item,
+          updatedAt: formattedDate,
+        };
+      });
+    }
+  } catch (err) {
+    console.log(err);
   }
+  // console.log("updatedData = ", updatedData);
+  // console.log("realtimeDatas = ", realtimeDatas);
+
   return (
     <Table
       rowKey={(record) => record._id}
-      // key={props.data.key}
       columns={columns}
-      dataSource={props.data}
+      dataSource={updatedData}
       scroll={{ x: 200 }}
     ></Table>
   );

@@ -5,7 +5,7 @@ const { getRealtimeData } = require("../controllers/realtimeController");
 const {
   addDevice,
   getDevices,
-  getDevices_dashboard,
+  deleteDevice,
 } = require("../controllers/deviceController");
 const {
   test,
@@ -38,10 +38,14 @@ router.post("/adddevice", addDevice);
 
 router.post("/devices", getDevices);
 
-// router.post("/devices_dashboard", getDevices_dashboard);
-
 router.post("/getlatestdata", getRealtimeData);
 
 router.post("/help", getHelpDevice);
+
+router.post("/uploads", (req, res) => {
+  console.log(req);
+});
+
+router.delete("/devices", deleteDevice);
 
 module.exports = router;

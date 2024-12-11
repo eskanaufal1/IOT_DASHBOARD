@@ -1,13 +1,14 @@
 import React, { useEffect, useState } from "react";
-import { Divider, Radio, Table, Tag } from "antd";
+import { Table, Tag, Popconfirm } from "antd";
 import axios from "axios";
 import { UserContext } from "../../context/userContext";
 import { useContext } from "react";
+import { useQuery } from "@tanstack/react-query";
 
 axios.defaults.baseURL = import.meta.env.VITE_AXIOS_BASE_URL;
 axios.defaults.withCredentials = true;
 
-const columns = [
+let columns = [
   {
     title: "Device",
     dataIndex: "device",
@@ -36,59 +37,87 @@ const columns = [
     dataIndex: "topic",
     key: "4",
   },
+  {
+    title: "Action",
+    dataIndex: "action",
+    key: "5",
+    render: (_, record) => {
+      return (
+        <Popconfirm
+          title="Are you sure to delete this device?"
+          okText="Yes"
+          cancelText="No"
+          onConfirm={async () => {
+            console.log("confirm delete ", record.device, record._id);
+            await axios.delete("/devices", {
+              data: {
+                device: record.device,
+                _id: record._id,
+              },
+            });
+          }}
+        >
+          <a>Delete</a>
+        </Popconfirm>
+      );
+    },
+  },
 ];
 
-// rowSelection object indicates the need for row selection
-const rowSelection = {
-  onChange: (selectedRowKeys, selectedRows) => {
-    console.log(
-      `selectedRowKeys: ${selectedRowKeys}`,
-      "selectedRows: ",
-      selectedRows
-    );
-  },
-  getCheckboxProps: (record) => ({
-    disabled: record.name === "Disabled User",
-    // Column configuration not to be checked
-    name: record.name,
-  }),
-};
-
 const TableDevice = () => {
+  const [selectedRowKeys, setSelectedRowKeys] = useState([]);
+
+  const onSelectChange = (newSelectedRowKeys) => {
+    console.log("selectedRowKeys changed: ", newSelectedRowKeys);
+    setSelectedRowKeys(newSelectedRowKeys);
+  };
+  const rowSelection = {
+    selectedRowKeys,
+    onChange: onSelectChange,
+  };
+  const hasSelected = selectedRowKeys.length > 0;
   const { user, setUser } = useContext(UserContext);
-  const [deviceData, setDeviceData] = useState([]);
-  const getData = async () => {
-    // console.log(user);
-    if (user) {
-      await axios
+  const {
+    isError,
+    isLoading,
+    error,
+    data: dataQuery,
+    isFetching,
+  } = useQuery({
+    queryKey: ["devices"],
+    queryFn: async () => {
+      const response = await axios
         .post("/devices", { created_by: user.email })
         .then((res) => {
           setDeviceData(res.data);
-          console.log("device data = ", deviceData);
-        })
-        .catch((err) => {
-          console.log(err);
-          setDeviceData([]);
+          return res;
         });
-    }
-  };
+      return response;
+    },
+    refetchInterval: 2000,
+  });
+
+  const [deviceData, setDeviceData] = useState([]);
+
   useEffect(() => {
-    const interval = setInterval(() => {
-      getData();
-    }, 1000);
-    return () => clearInterval(interval);
-  }, []);
+    if (dataQuery) {
+      setDeviceData(dataQuery.data);
+      console.log("Device data = ", dataQuery.data);
+    }
+  }, [dataQuery]);
 
   return (
     <div>
       <Table
+        rowSelection={rowSelection}
+        onChange={(e) => console.log("onChange = ", e)}
         rowKey={(record) => record._id}
         columns={columns}
         dataSource={deviceData}
         scroll={{
           x: 100,
         }}
-      />
+      ></Table>
     </div>
   );
 };

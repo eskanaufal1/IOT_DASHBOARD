@@ -5,7 +5,10 @@ const getHelpDevice = (req, res) => {
   Device.findOne({ device: device }).then((device) => {
     console.log("device helped = ", device.device);
     if (device) {
-      client.publish("unpam_gps_tracker/led", "help");
+      client.publish(
+        "unpam_gps_tracker/led",
+        JSON.stringify({ message: "help" })
+      );
     }
   });
   //   client.publish("unpam_gps_tracker/led", "help");

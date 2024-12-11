@@ -1,0 +1,8 @@
+{
+  "apps": [
+    {
+      "name": "iot-dashboard",
+      "script": "serve -s dist"
+    }
+  ]
+}

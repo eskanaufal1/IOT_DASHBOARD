@@ -15,7 +15,7 @@ import { useNavigate } from "react-router-dom";
 import axios from "axios";
 import Logo from "../assets/Smart GPS.svg";
 import { useSelector, useDispatch } from "react-redux";
-import { signIn, signOut } from "../redux/reducers/isLogged";
+import { signIn, signOut } from "../redux/reducers/isLoggedReducer";
 
 const { Header, Content, Footer, Sider } = Layout;
 const { Title, Text } = Typography;
@@ -78,8 +78,8 @@ const LoginPage = () => {
         await setAlertMessage({ message: "Login success", type: "success" });
         setLoginData({ username: "", password: "" });
         console.log("Navigate to Dashboard");
-        navigate("/main");
         dispatch(signIn());
+        navigate("/main");
       }
     } catch (err) {
       console.log(err);

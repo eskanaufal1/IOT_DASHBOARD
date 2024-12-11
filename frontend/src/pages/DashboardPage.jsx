@@ -9,14 +9,17 @@ import {
   Space,
   theme,
   Table,
+  Skeleton,
+  Spin,
 } from "antd";
 import axios from "axios";
-
 import Maps from "../components/Maps";
 import TableDashboard from "../components/TableDashboard";
 import { useContext } from "react";
 import { UserContext } from "../../context/userContext";
-import TableDashboardState from "../components/TableDashboardState";
+import { useQuery } from "@tanstack/react-query";
+import { setData } from "../redux/reducers/realtimeDataReducer";
+import { useDispatch } from "react-redux";
 
 axios.defaults.baseURL = import.meta.env.VITE_AXIOS_BASE_URL;
 axios.defaults.withCredentials = true;
@@ -29,47 +32,61 @@ const { useToken } = theme;
 const DashboardPage = ({ data }) => {
   const { user, setUser } = useContext(UserContext);
   const [uniqueDevices, setUniqueDevices] = useState(0);
-  const [deviceData, setDeviceData] = useState([]);
-
   const { token } = useToken();
   const [latestData, setLatestData] = useState([]);
+  const dispatch = useDispatch();
 
-  const getLatestData = async () => {
-    if (user && user.email) {
-      await axios
+  const {
+    isError,
+    isLoading,
+    error,
+    data: dataQuery,
+    isFetching,
+  } = useQuery({
+    queryKey: ["realtimeData"],
+    queryFn: async () => {
+      const response = await axios
         .post("/getlatestdata", { created_by: user.email })
-        .then((response) => {
-          setLatestData(response.data);
-          console.log("get new latest data");
-          if (latestData) {
-            // ======================================================
-
-            // Extract unique IDs using Set
-            const uniqueIds = new Set(latestData.map((item) => item.device));
-
-            // Count the unique IDs
-            setUniqueDevices(uniqueIds.size);
-            setDeviceData(uniqueIds);
-            // console.log("Unique IDs:", uniqueIds);
-
-            // console.log("Unique ID count:", uniqueIds.size); // Output: 4
-            // ======================================================
-          }
-        })
-        .catch((error) => {
-          console.error(error);
+        .then((res) => {
+          // dispatch(setData(res.data));
+          return res;
         });
-    }
-  };
-  useEffect(() => {
-    const interval = setInterval(() => {
-      getLatestData();
-    }, 3000);
-
-    return () => clearInterval(interval);
+      return response;
+    },
+    refetchInterval: 5000,
   });
-  // console.log("latest Data =", latestData);
+  // console.log(
+  //   "data ",
+  //   dataQuery,
+  //   "isFetching ",
+  //   isFetching,
+  //   "isLoading ",
+  //   isLoading
+  // );
+  useEffect(() => {
+    if (dataQuery) {
+      const uniqueIds = new Set(dataQuery.data.map((item) => item.device));
+      setUniqueDevices(uniqueIds.size);
+      setLatestData(dataQuery.data);
+      dispatch(setData(dataQuery.data));
+    }
+  }, [dataQuery]);
 
+  if (!user) {
+    return (
+      <Layout>
+        <Content
+          style={{
+            padding: 20,
+            borderRadius: token.borderRadius,
+            backgroundColor: data.backgroundColor,
+          }}
+        >
+          <Spin></Spin>
+        </Content>
+      </Layout>
+    );
+  }
   return (
     <Layout>
       <Content
@@ -94,16 +111,6 @@ const DashboardPage = ({ data }) => {
           ]}
         />
       </Content>
-      {/* <br />
-      <Content
-        style={{
-          padding: "10px 24px",
-          borderRadius: token.borderRadius,
-          backgroundColor: data.backgroundColor,
-        }}
-      >
-        <TableDashboardState data={deviceData} />
-      </Content> */}
       <br />
       <Content
         style={{

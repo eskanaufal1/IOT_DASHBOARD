@@ -21,13 +21,14 @@ import {
   Typography,
 } from "antd";
 import { Routes, Route, useNavigate } from "react-router-dom";
+import { useSelector, useDispatch } from "react-redux";
+import axios from "axios";
+import { toggleTheme } from "../redux/reducers/themeSetReducer";
 import DashboardPage from "./DashboardPage";
 import UserPage from "./UserPage";
 import DevicePage from "./DevicePage";
 import Logo from "../assets/Smart GPS.svg";
 import DropdownMenu from "../components/DropdownMenu";
-import { useSelector } from "react-redux";
-import axios from "axios";
 
 axios.defaults.baseURL = import.meta.env.VITE_AXIOS_BASE_URL;
 axios.defaults.withCredentials = true;
@@ -38,7 +39,8 @@ var data = {
 
 const CustomTrigger = () => {
   const isLogged = useSelector((state) => state.isLogged.isLogged);
-
+  const themeStat = useSelector((state) => state.themeSet);
+  const dispatch = useDispatch();
   const navigate = useNavigate();
   const { Title, Text } = Typography;
   const { Header, Sider, Content } = Layout;
@@ -71,6 +73,8 @@ const CustomTrigger = () => {
   const changeTheme = (value) => {
     setTheme(value ? "light" : "dark");
     setIsDarkMode(value ? true : false);
+    dispatch(toggleTheme(value ? true : false));
+    console.log("isDarkMode : ", isDarkMode);
   };
   useEffect(() => {
     if (isLogged === false) {
@@ -187,8 +191,10 @@ const CustomTrigger = () => {
               >
                 <Space>
                   <Switch
-                    checked={themeSet === "light"}
+                    checked={isDarkMode}
                     onChange={changeTheme}
+                    // onChange={()}
+                    defaultChecked="Dark"
                     checkedChildren="Dark"
                     unCheckedChildren="Light"
                     style={{ marginRight: 16 }}
@@ -203,8 +209,6 @@ const CustomTrigger = () => {
               margin: "24px 16px",
               padding: "0 25px",
               minHeight: 280,
-              // background: "#575757",
-              // borderRadius: 100,
             }}
           >
             <ContentRouter theme={themeSet} />
@@ -229,9 +233,9 @@ function ContentRouter() {
 function HeaderRouter() {
   return (
     <Routes>
-      <Route path="/dashboard" element={<div>Dashboard</div>} />
-      <Route path="/device" element={<div>Device</div>} />
-      <Route path="/user" element={<div>User</div>} />
+      <Route path="/main/dashboard" element={<div>Dashboard</div>} />
+      <Route path="/main/device" element={<div>Device</div>} />
+      <Route path="/main/user" element={<div>User</div>} />
     </Routes>
   );
 }

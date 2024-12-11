@@ -1,13 +1,13 @@
 import React from "react";
 import { useNavigate } from "react-router-dom";
-import { Button, Dropdown, Space, Avatar, Divider, theme } from "antd";
+import { Button, Dropdown, Flex, Space, Avatar, Divider, theme } from "antd";
 import {
   UserOutlined,
   SettingOutlined,
   LogoutOutlined,
 } from "@ant-design/icons";
 import { useSelector, useDispatch } from "react-redux";
-import { signOut } from "../redux/reducers/isLogged";
+import { signOut } from "../redux/reducers/isLoggedReducer";
 import axios from "axios";
 
 const { useToken } = theme;
@@ -24,14 +24,6 @@ const items = [
     key: "2",
     icon: <SettingOutlined />,
     label: "Settings",
-  },
-  {
-    type: "divider",
-  },
-  {
-    key: "3",
-    icon: <LogoutOutlined />,
-    label: <a href="/logout">Logout</a>,
   },
 ];
 
@@ -63,7 +55,7 @@ const DropdownMenu = () => {
               margin: 0,
             }}
           />
-          <Space
+          <Flex
             style={{
               padding: 8,
             }}
@@ -80,7 +72,7 @@ const DropdownMenu = () => {
             >
               Logout
             </Button>
-          </Space>
+          </Flex>
         </div>
       )}
     >

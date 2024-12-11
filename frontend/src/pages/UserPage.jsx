@@ -2,7 +2,9 @@ import React from "react";
 import { Layout, Flex, Space, Typography, Input, theme } from "antd";
 import { UserOutlined } from "@ant-design/icons";
 import UploadButton from "../components/UploadButton";
-
+import { useSelector } from "react-redux";
+import { UserContext } from "../../context/userContext";
+import { useContext } from "react";
 const { Title, Text } = Typography;
 const { Header, Content, Footer, Sider } = Layout;
 const widthText = { width: "60px" };
@@ -10,6 +12,22 @@ const { useToken } = theme;
 
 const UserPage = ({ data }) => {
   const { token } = useToken();
+  const { user, setUser } = useContext(UserContext);
+  if (!user) {
+    return (
+      <Layout>
+        <Content
+          style={{
+            padding: 20,
+            borderRadius: token.borderRadius,
+            backgroundColor: data.backgroundColor,
+          }}
+        >
+          <Spin></Spin>
+        </Content>
+      </Layout>
+    );
+  }
   return (
     <Layout>
       <Content
@@ -34,27 +52,21 @@ const UserPage = ({ data }) => {
             </Title>
           </Space>
         </Flex>
-        <div
-          className="profile"
-          // style={{ paddingLeft: "100px", paddingTop: "50px" }}
-        >
-          <Flex>
+        <Flex vertical gap={10} className="profile">
+          {/* <Flex>
             <Space size={25}>
               <Text>Profile Picture</Text>
-              {/* <Flex vertical justify="flex-start" align="flex-start">
-                <UserOutlined style={{ fontSize: "100px" }} />
-                <Text>Upload your profile picture</Text>
-              </Flex> */}
+
               <UploadButton />
             </Space>
-          </Flex>
+          </Flex> */}
           <Flex>
             <Space size={50}>
               <div style={widthText}>
                 <Text>Email</Text>
               </div>
               <Input
-                placeholder="Please enter your email"
+                placeholder={user.email || "Please enter your email"}
                 style={{ width: "100%" }}
               />
             </Space>
@@ -64,34 +76,34 @@ const UserPage = ({ data }) => {
               <div style={widthText}>
                 <Text>Full Name</Text>
               </div>
-              <Input placeholder="Please enter your full name" />
+              <Input placeholder={user.username || "Please enter your name"} />
             </Space>
           </Flex>
-          <Flex>
+          {/* <Flex>
             <Space size={50}>
               <div style={widthText}>
                 <Text>URL</Text>
               </div>
               <Input placeholder="Please enter your URL" />
             </Space>
-          </Flex>
-          <Flex>
+          </Flex> */}
+          {/* <Flex>
             <Space size={50}>
               <div style={widthText}>
                 <Text>Company</Text>
               </div>
               <Input placeholder="Please enter your company" />
             </Space>
-          </Flex>
-          <Flex>
+          </Flex> */}
+          {/* <Flex>
             <Space size={50}>
               <div style={widthText}>
                 <Text>Address</Text>
               </div>
               <Input placeholder="Please enter your address" />
             </Space>
-          </Flex>
-        </div>
+          </Flex> */}
+        </Flex>
       </Content>
     </Layout>
   );

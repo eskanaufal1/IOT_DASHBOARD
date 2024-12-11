@@ -31,32 +31,32 @@ const addDevice = async (req, res) => {
 const getDevices = async (req, res) => {
   try {
     const { created_by } = req.body;
-    console.log("created_by = ", created_by);
     const devices = await Device.find({
       created_by: created_by,
     }).sort({ createdAt: -1 });
     await res.status(200).json(devices);
-    console.log("get devices success");
-    console.log(devices);
+    // console.log("get devices success");
+    // console.log(devices);
   } catch (error) {
     res.status(500).json({ error: error });
     console.log(error);
   }
 };
 
-const getDevices_dashboard = async (req, res) => {
+const deleteDevice = async (req, res) => {
   try {
-    const { device } = req.body;
-    const devices = await Device.find({
-      device: device,
-    }).sort({ createdAt: -1 });
-    await res.status(200).json(devices);
-    console.log("get devices success");
-    console.log(devices);
-  } catch (error) {
-    res.status(500).json({ error: error });
-    console.log(error);
+    const { device, _id } = req.body;
+    const result = await Device.findByIdAndDelete(_id); // Menghapus berdasarkan ID
+    if (!result) {
+      console.log("Data tidak ditemukan");
+      return res.status(404).send("Data tidak ditemukan");
+    }
+    console.log("Data berhasil dihapus");
+    res.status(200).send("Data berhasil dihapus");
+  } catch (err) {
+    res.status(500).send("Terjadi kesalahan saat menghapus data");
+    console.log(err);
   }
 };
 
-module.exports = { addDevice, getDevices, getDevices_dashboard };
+module.exports = { addDevice, getDevices, deleteDevice };
